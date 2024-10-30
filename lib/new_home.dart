@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
+
+
 import 'package:ishipprj/chat_intro_screen.dart';
 import 'package:ishipprj/custom_nav_bar.dart';
 import 'package:ishipprj/home_screen.dart';
-import 'package:ishipprj/profile_screen.dart';
+import 'package:ishipprj/profile.dart';
 
 int _selectedIndex = 0;
 
@@ -19,10 +21,15 @@ class _NewHomeState extends State<NewHome> {
     // Add your screens here
     final List<Widget> _screens = [
       HomeScreen(),
-      // ChatIntroScreen(),
-      // MoodTrackPage(),
       ChatIntroScreen(),
-      RootApp1(),
+      // MoodTrackerPage(),
+      // RootApp1()
+      ProfilePage(
+          email: 'email',
+          age: 'age',
+          phone: 'phone',
+          gender: 'gender',
+          name: 'name')
     ];
 
     void _onItemTapped(int index) {

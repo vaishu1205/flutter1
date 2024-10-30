@@ -38,6 +38,7 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+
 import 'package:ishipprj/loginscreen.dart';
 import 'package:lottie/lottie.dart';
 
@@ -99,6 +100,7 @@ class _SplashScreenState extends State<StartingPage>
         child: FadeTransition(
           opacity: _animation,
           child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
             //mainAxisSize: MainAxisSize.min,
             children: [
               // Image.network(
@@ -117,7 +119,6 @@ class _SplashScreenState extends State<StartingPage>
               SizedBox(
                 height: 40,
               ),
-              
             ],
           ),
         ),

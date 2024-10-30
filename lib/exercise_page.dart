@@ -2,24 +2,23 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 List<String> exercise_names = [
   "Walking",
   "Running",
   "Cycling",
-  "Skipping",
   "Cricket",
   "Basketball",
   "Football"
 ];
 List<String> imagess = [
-  "assets/undraw_Passing_by_0un9.png",
-  "assets/undraw_fitness_stats_sht6.png",
-  "assets/undraw_indoor_bike_pwa4.png",
-  "assets/undraw_Children_re_c37f.png",
-  "assets/undraw_Home_run_acyh.png",
-  "assets/Basketball_illustration.png",
-  "assets/undraw_goal_0v5v.png"
+  "assets/walking.jpeg",
+  "assets/running.jpeg",
+  "assets/cycling.jpeg",
+  "assets/cricket.jpeg",
+  "assets/basketball.jpeg",
+  "assets/football.jpeg",
 ];
 
 class ExercisePage extends StatelessWidget {
@@ -28,13 +27,24 @@ class ExercisePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Color.fromARGB(255, 129, 47, 143),
+      backgroundColor: Color(0xFF1A0129),
       appBar: AppBar(
-        backgroundColor: Color(0XFFCE93D8),
+        backgroundColor: Color(0xFF1A0129),
         centerTitle: true,
         title: Text(
           "Exercise",
-          style: TextStyle(fontWeight: FontWeight.w900, color: Colors.white),
+          style: GoogleFonts.poppins(
+            fontWeight: FontWeight.w700,
+            color: Colors.white.withOpacity(0.95),
+            fontSize: 24,
+          ),
+        ),
+        leading: IconButton(
+          onPressed: () {
+            Navigator.pop(context);
+          },
+          icon: Icon(Icons.arrow_back_ios_new),
+          color: Colors.white,
         ),
       ),
       body: Column(
@@ -51,29 +61,50 @@ class ExercisePage extends StatelessWidget {
                         color: Colors.white,
                       ),
                       height: 150,
-                      width: 50,
-                      child: Padding(
-                        padding: const EdgeInsets.symmetric(vertical: 25),
-                        child: Stack(
-                          children: [
-                            Positioned(
-                              left: 10,
-                              child: Text(
-                                exercise_names[index],
-                                style: TextStyle(
-                                    fontWeight: FontWeight.bold, fontSize: 20),
+                      child: Stack(
+                        children: [
+                          ClipRRect(
+                            borderRadius: BorderRadius.circular(16),
+                            child: ColorFiltered(
+                              colorFilter: ColorFilter.mode(
+                                Colors.black.withOpacity(0.5),
+                                BlendMode.darken,
                               ),
-                            ),
-                            Positioned(
-                              right: 10,
                               child: Image.asset(
                                 imagess[index],
-                                height: 100,
-                                fit: BoxFit.contain,
+                                height: double.infinity,
+                                width: double.infinity,
+                                fit: BoxFit.cover,
+                                alignment: Alignment.bottomCenter,
                               ),
                             ),
-                          ],
-                        ),
+                          ),
+                          // Text positioned correctly within the container
+                          Positioned(
+                            left: 10,
+                            top: 10,
+                            child: Row(
+                              children: [
+                                Text(
+                                  exercise_names[index],
+                                  style: TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 30,
+                                    color: Colors.white,
+                                  ),
+                                ),
+                                // Spacer(),
+                                IconButton(
+                                    onPressed: () {},
+                                    icon: Icon(
+                                      Icons.arrow_forward_ios_sharp,
+                                      color: Colors.white,
+                                      size: 20,
+                                    ))
+                              ],
+                            ),
+                          ),
+                        ],
                       ),
                     ),
                   );

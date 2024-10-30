@@ -1,76 +1,11 @@
-// import 'package:flutter/material.dart';
-// import 'package:google_fonts/google_fonts.dart';
-
-// class ProfilePage extends StatelessWidget {
-//   final String email;
-//   final String age;
-//   final String phone;
-//   final String gender;
-
-//   const ProfilePage({
-//     super.key,
-//     required this.email,
-//     required this.age,
-//     required this.phone,
-//     required this.gender,
-//   });
-
-//   @override  
-//   Widget build(BuildContext context) {
-//     return Scaffold(
-//       backgroundColor: const Color.fromARGB(255, 228, 158, 240),
-//       appBar: AppBar(
-//         title: Text('Profile'),
-//         backgroundColor: const Color.fromARGB(255, 228, 158, 240),
-//       ),
-//       body: Padding(
-//         padding: const EdgeInsets.all(16.0),
-//         child: Column(
-//           crossAxisAlignment: CrossAxisAlignment.start,
-//           children: [
-//             Text(
-//               'Profile Information',
-//               style:
-//                   GoogleFonts.arima(fontSize: 24, fontWeight: FontWeight.bold),
-//             ),
-//             SizedBox(height: 16),
-//             Text('Email: $email', style: GoogleFonts.arima(fontSize: 18)),
-//             SizedBox(height: 8),
-//             Text('Age: $age', style: GoogleFonts.arima(fontSize: 18)),
-//             SizedBox(height: 8),
-//             Text('Phone Number: $phone',
-//                 style: GoogleFonts.arima(fontSize: 18)),
-//             SizedBox(height: 8),
-//             Text('Gender: $gender', style: GoogleFonts.arima(fontSize: 18)),
-//             SizedBox(height: 20),
-//             ElevatedButton(
-//               onPressed: () {
-//                 Navigator.pop(context); // Navigate back to the previous screen
-//               },
-//               style: ElevatedButton.styleFrom(
-//                 backgroundColor: const Color.fromARGB(255, 248, 86, 46),
-//                 padding: EdgeInsets.symmetric(horizontal: 80, vertical: 20),
-//                 shape: RoundedRectangleBorder(
-//                   borderRadius: BorderRadius.circular(30.0),
-//                 ),
-//               ),
-//               child: Text(
-//                 'Back to Home',
-//                 style: GoogleFonts.arima(color: Colors.white),
-//               ),
-//             ),
-//           ],
-//         ),
-//       ),
-//     );
-//   }
-// }
-
+import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+
+import 'package:image_picker/image_picker.dart';
 import 'package:ishipprj/new_home.dart';
 
-class ProfilePage extends StatelessWidget {
+class ProfilePage extends StatefulWidget {
   final String email;
   final String age;
   final String phone;
@@ -87,85 +22,285 @@ class ProfilePage extends StatelessWidget {
   });
 
   @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      // backgroundColor: const Color(0xFFEDE7F6), // Light purple background
-      backgroundColor: Color(0xFF1A0129),
-      appBar: AppBar(
-        title: Text('Profile', style: GoogleFonts.arima(color: Colors.yellow)),
-        backgroundColor: Color(0xFF1A0129),
-        elevation: 0,
-        iconTheme: IconThemeData(color: Colors.black),
-        centerTitle: true,
-      ),
-      body: SingleChildScrollView(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            // Profile Picture
-            CircleAvatar(
-              radius: 60,
-              backgroundImage: AssetImage('assets/profile_picture.png'),
-              backgroundColor: Colors.grey[300],
-            ),
-            SizedBox(height: 16),
-            // Profile Information Card
-            Card(
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(20.0),
-              ),
-              elevation: 8,
-              margin: const EdgeInsets.symmetric(vertical: 20, horizontal: 16),
-              child: Padding(
-                padding: const EdgeInsets.all(20.0),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
+  State<ProfilePage> createState() => _ProfilePageState();
+}
+
+class _ProfilePageState extends State<ProfilePage> {
+  File? _imageFile;
+  final ImagePicker _picker = ImagePicker();
+
+  Future<void> _pickImage(ImageSource source) async {
+    try {
+      final XFile? pickedFile = await _picker.pickImage(source: source);
+      if (pickedFile != null) {
+        setState(() {
+          _imageFile = File(pickedFile.path);
+        });
+      }
+    } catch (e) {
+      // Handle any errors
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Error picking image')),
+      );
+    }
+  }
+
+  void _showImagePickerOptions() {
+    showModalBottomSheet(
+      context: context,
+      builder: (BuildContext context) {
+        return Container(
+          decoration: const BoxDecoration(
+            color: Color(0xFF1A0129),
+            borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+          ),
+          child: Padding(
+            padding: const EdgeInsets.all(20.0),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Text(
+                  'Choose Profile Picture',
+                  style: GoogleFonts.arima(
+                    color: Colors.white,
+                    fontSize: 20,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                const SizedBox(height: 20),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   children: [
-                    Text(
-                      'Profile Information',
-                      style: GoogleFonts.arima(
-                        fontSize: 24,
-                        fontWeight: FontWeight.bold,
-                        color: Color(0xFF6A1B9A), // Deep purple
-                      ),
+                    _buildPickerOption(
+                      icon: Icons.photo_camera,
+                      title: 'Camera',
+                      onTap: () {
+                        _pickImage(ImageSource.camera);
+                        Navigator.pop(context);
+                      },
                     ),
-                    Divider(color: Colors.grey[400]),
-                    SizedBox(height: 12),
-                    _buildInfoRow('Name', name),
-                    SizedBox(height: 8),
-                    _buildInfoRow('Email', email),
-                    SizedBox(height: 8),
-                    _buildInfoRow('Age', age),
-                    SizedBox(height: 8),
-                    _buildInfoRow('Phone', phone),
-                    SizedBox(height: 8),
-                    _buildInfoRow('Gender', gender),
+                    _buildPickerOption(
+                      icon: Icons.photo_library,
+                      title: 'Gallery',
+                      onTap: () {
+                        _pickImage(ImageSource.gallery);
+                        Navigator.pop(context);
+                      },
+                    ),
                   ],
                 ),
+              ],
+            ),
+          ),
+        );
+      },
+    );
+  }
+
+  Widget _buildPickerOption({
+    required IconData icon,
+    required String title,
+    required VoidCallback onTap,
+  }) {
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        padding: const EdgeInsets.all(15),
+        decoration: BoxDecoration(
+          gradient: const LinearGradient(
+            colors: [Color(0xFF9C27B0), Color(0xFF673AB7)],
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+          ),
+          borderRadius: BorderRadius.circular(15),
+          boxShadow: [
+            BoxShadow(
+              color: const Color(0xFF9C27B0).withOpacity(0.3),
+              blurRadius: 8,
+              offset: const Offset(0, 4),
+            ),
+          ],
+        ),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Icon(icon, color: Colors.white, size: 30),
+            const SizedBox(height: 8),
+            Text(
+              title,
+              style: GoogleFonts.arima(color: Colors.white),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      backgroundColor: const Color(0xFF1A0129),
+      extendBodyBehindAppBar: true,
+      appBar: AppBar(
+        backgroundColor: Colors.transparent,
+        elevation: 0,
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back_ios, color: Colors.white),
+          onPressed: () => Navigator.pop(context),
+        ),
+      ),
+      body: SingleChildScrollView(
+        child: Column(
+          children: [
+            Container(
+              width: double.infinity,
+              decoration: BoxDecoration(
+                gradient: const LinearGradient(
+                  begin: Alignment.topLeft,
+                  end: Alignment.bottomRight,
+                  colors: [Color(0xFF9C27B0), Color(0xFF673AB7)],
+                ),
+                boxShadow: [
+                  BoxShadow(
+                    color: const Color(0xFF9C27B0).withOpacity(0.3),
+                    blurRadius: 20,
+                    offset: const Offset(0, 10),
+                  ),
+                ],
+              ),
+              child: Column(
+                children: [
+                  const SizedBox(height: 100),
+                  GestureDetector(
+                    onTap: _showImagePickerOptions,
+                    child: Stack(
+                      children: [
+                        Container(
+                          decoration: BoxDecoration(
+                            shape: BoxShape.circle,
+                            border: Border.all(color: Colors.white, width: 3),
+                            boxShadow: [
+                              BoxShadow(
+                                color: Colors.black.withOpacity(0.2),
+                                blurRadius: 20,
+                              ),
+                            ],
+                          ),
+                          child: CircleAvatar(
+                            radius: 60,
+                            backgroundColor: Colors.grey[300],
+                            backgroundImage: _imageFile != null
+                                ? FileImage(_imageFile!)
+                                : null,
+                            child: _imageFile == null
+                                ? const Icon(
+                                    Icons.person,
+                                    size: 60,
+                                    color: Colors.grey,
+                                  )
+                                : null,
+                          ),
+                        ),
+                        Positioned(
+                          bottom: 0,
+                          right: 0,
+                          child: Container(
+                            padding: const EdgeInsets.all(8),
+                            decoration: BoxDecoration(
+                              color: Colors.white,
+                              shape: BoxShape.circle,
+                              boxShadow: [
+                                BoxShadow(
+                                  color: Colors.black.withOpacity(0.2),
+                                  blurRadius: 5,
+                                ),
+                              ],
+                            ),
+                            child: const Icon(
+                              Icons.camera_alt,
+                              size: 20,
+                              color: Color(0xFF9C27B0),
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  const SizedBox(height: 15),
+                  Text(
+                    widget.name,
+                    style: GoogleFonts.arima(
+                      fontSize: 28,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.white,
+                    ),
+                  ),
+                  const SizedBox(height: 30),
+                ],
               ),
             ),
-            // Back Button
-
-            ElevatedButton.icon(
-              onPressed: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => NewHome()),
-                );
-              },
-              style: ElevatedButton.styleFrom(
-                backgroundColor:
-                    const Color.fromARGB(255, 119, 56, 137), // Deep pink
-                padding: EdgeInsets.symmetric(horizontal: 50, vertical: 15),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(30.0),
-                ),
-              ),
-              icon: Icon(Icons.arrow_back, color: Colors.white),
-              label: Text(
-                'Home Screen',
-                style: GoogleFonts.arima(color: Colors.white, fontSize: 18),
+            const SizedBox(height: 30),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 20),
+              child: Column(
+                children: [
+                  _buildInfoCard('Email', widget.email, Icons.email),
+                  _buildInfoCard('Age', widget.age, Icons.cake),
+                  _buildInfoCard('Phone', widget.phone, Icons.phone),
+                  _buildInfoCard('Gender', widget.gender, Icons.person),
+                  const SizedBox(height: 25),
+                  // Home Button
+                  Container(
+                    width: double.infinity,
+                    margin: const EdgeInsets.symmetric(horizontal: 20),
+                    decoration: BoxDecoration(
+                      gradient: const LinearGradient(
+                        colors: [Color(0xFF9C27B0), Color(0xFF673AB7)],
+                        begin: Alignment.centerLeft,
+                        end: Alignment.centerRight,
+                      ),
+                      borderRadius: BorderRadius.circular(30),
+                      boxShadow: [
+                        BoxShadow(
+                          color: const Color(0xFF9C27B0).withOpacity(0.3),
+                          blurRadius: 8,
+                          offset: const Offset(0, 4),
+                        ),
+                      ],
+                    ),
+                    child: Material(
+                      color: Colors.transparent,
+                      child: InkWell(
+                        onTap: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(builder: (context) => NewHome()),
+                          );
+                        },
+                        borderRadius: BorderRadius.circular(30),
+                        child: Padding(
+                          padding: const EdgeInsets.symmetric(vertical: 15),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              const Icon(Icons.home, color: Colors.white),
+                              const SizedBox(width: 10),
+                              Text(
+                                'Home Screen',
+                                style: GoogleFonts.arima(
+                                  color: Colors.white,
+                                  fontSize: 18,
+                                  fontWeight: FontWeight.w600,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 30),
+                ],
               ),
             ),
           ],
@@ -174,248 +309,47 @@ class ProfilePage extends StatelessWidget {
     );
   }
 
-  // Widget to build individual profile information row
-  Widget _buildInfoRow(String title, String value) {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      children: [
-        Text(
-          title,
-          style: GoogleFonts.arima(fontSize: 18, color: Colors.grey[700]),
+  Widget _buildInfoCard(String title, String value, IconData icon) {
+    return Container(
+      margin: const EdgeInsets.only(bottom: 15),
+      decoration: BoxDecoration(
+        color: Colors.white.withOpacity(0.1),
+        borderRadius: BorderRadius.circular(20),
+        border: Border.all(
+          color: Colors.white.withOpacity(0.2),
+          width: 1,
         ),
-        Text(
-          value,
-          style: GoogleFonts.arima(
-            fontSize: 18,
-            fontWeight: FontWeight.bold,
-            color: Color(0xFF4A148C), // Deep purple text color
+      ),
+      child: ListTile(
+        contentPadding:
+            const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+        leading: Container(
+          padding: const EdgeInsets.all(8),
+          decoration: BoxDecoration(
+            color: const Color(0xFF9C27B0).withOpacity(0.2),
+            borderRadius: BorderRadius.circular(10),
+          ),
+          child: Icon(
+            icon,
+            color: Colors.white,
           ),
         ),
-      ],
+        title: Text(
+          title,
+          style: GoogleFonts.arima(
+            color: Colors.grey[400],
+            fontSize: 16,
+          ),
+        ),
+        subtitle: Text(
+          value,
+          style: GoogleFonts.arima(
+            color: Colors.white,
+            fontSize: 18,
+            fontWeight: FontWeight.w600,
+          ),
+        ),
+      ),
     );
   }
 }
-
-// import 'package:flutter/material.dart';
-// import 'package:flutter/cupertino.dart';
-// import 'package:google_fonts/google_fonts.dart';
-// import 'package:image_picker/image_picker.dart';
-// import 'package:ishipprj/profile_screen.dart';
-// import 'dart:io';
-//  // Your custom screens go here
-// class ProfilePage extends StatelessWidget {
-//   const ProfilePage({super.key});
-
-//   @override
-//   Widget build(BuildContext context) {
-//     return Profile();
-//   }
-// }
-
-// class Profile extends StatefulWidget {
-//   const Profile({Key? key}) : super(key: key);
-
-//   @override
-//   _ProfileState createState() => _ProfileState();
-// }
-
-// class _ProfileState extends State<Profile> {
-//   File? _profileImage;
-
-//   Future<void> _pickProfileImage() async {
-//     final picker = ImagePicker();
-//     final pickedFile = await picker.pickImage(source: ImageSource.gallery);
-
-//     if (pickedFile != null) {
-//       setState(() {
-//         _profileImage = File(pickedFile.path);
-//       });
-//     }
-//   }
-
-//   @override
-//   Widget build(BuildContext context) {
-//     return Scaffold(
-//       backgroundColor: Color(0xFF1A0129), // Background color from ProfilePage
-//       appBar: AppBar(
-//         title: Text('Profile', style: GoogleFonts.arima(color: Colors.yellow)),
-//         backgroundColor: Color(0xFF1A0129),
-//         elevation: 0,
-//         iconTheme: IconThemeData(color: Colors.black),
-//         centerTitle: true,
-//       ),
-//       body: SingleChildScrollView(
-//         padding: const EdgeInsets.all(16.0),
-//         child: Column(
-//           crossAxisAlignment: CrossAxisAlignment.center,
-//           children: [
-//             // Profile Picture
-//             GestureDetector(
-//               onTap: _pickProfileImage,
-//               child: CircleAvatar(
-//                 radius: 60,
-//                 backgroundImage: _profileImage != null
-//                     ? FileImage(_profileImage!) as ImageProvider
-//                     : AssetImage('assets/profile_picture.png'),
-//                 backgroundColor: Colors.grey[300],
-//               ),
-//             ),
-//             SizedBox(height: 16),
-//             Text(
-//               "M Preethi",
-//               style: TextStyle(
-//                 fontSize: 18,
-//                 fontWeight: FontWeight.bold,
-//                 color: Colors.white,
-//               ),
-//             ),
-//             SizedBox(height: 16),
-//             // Profile Information Card
-//             Card(
-//               shape: RoundedRectangleBorder(
-//                 borderRadius: BorderRadius.circular(20.0),
-//               ),
-//               elevation: 8,
-//               margin: const EdgeInsets.symmetric(vertical: 20, horizontal: 16),
-//               child: Padding(
-//                 padding: const EdgeInsets.all(20.0),
-//                 child: Column(
-//                   crossAxisAlignment: CrossAxisAlignment.start,
-//                   children: [
-//                     Text(
-//                       'Profile Information',
-//                       style: GoogleFonts.arima(
-//                         fontSize: 24,
-//                         fontWeight: FontWeight.bold,
-//                         color: Color(0xFF6A1B9A), // Deep purple
-//                       ),
-//                     ),
-//                     Divider(color: Colors.grey[400]),
-//                     SizedBox(height: 12),
-//                     _buildInfoRow('Name', "M Preethi"),
-//                     SizedBox(height: 8),
-//                     _buildInfoRow('Email', "example@gmail.com"),
-//                     SizedBox(height: 8),
-//                     _buildInfoRow('Age', "25"),
-//                     SizedBox(height: 8),
-//                     _buildInfoRow('Phone', "+123456789"),
-//                     SizedBox(height: 8),
-//                     _buildInfoRow('Gender', "Female"),
-//                   ],
-//                 ),
-//               ),
-//             ),
-//             // List of navigation options
-//             ...List.generate(
-//               customListTiles.length,
-//               (index) {
-//                 final tile = customListTiles[index];
-//                 return Padding(
-//                   padding: const EdgeInsets.only(bottom: 5),
-//                   child: Card(
-//                     color: Colors.white60,
-//                     elevation: 4,
-//                     shadowColor: Colors.black12,
-//                     child: ListTile(
-//                       leading: Icon(tile.icon),
-//                       title: Text(tile.title),
-//                       trailing: IconButton(
-//                         onPressed: () {
-//                           // Navigate to different pages based on the tile title
-//                           switch (tile.title) {
-//                             case "Activity":
-//                               Navigator.push(
-//                                 context,
-//                                 MaterialPageRoute(
-//                                     builder: (context) => ActivityScreen()),
-//                               );
-//                               break;
-//                             case "Progress":
-//                               Navigator.push(
-//                                 context,
-//                                 MaterialPageRoute(
-//                                     builder: (context) => ProgressScreen()),
-//                               );
-//                               break;
-//                             case "Therapy Dr":
-//                               // Navigator.push(
-//                               //   context,
-//                               //   MaterialPageRoute(
-//                               //       builder: (context) => TherapyScreen()),
-//                               // );
-//                               break;
-//                             case "Community":
-//                               // Navigator.push(
-//                               //   context,
-//                               //   MaterialPageRoute(
-//                               //       builder: (context) => CommunityScreen()),
-//                               // );
-//                               break;
-//                             case "Notifications":
-//                               Navigator.push(
-//                                 context,
-//                                 MaterialPageRoute(
-//                                     builder: (context) =>
-//                                         NotificationsScreen()),
-//                               );
-//                               break;
-//                             case "Logout":
-//                               print("Logout pressed");
-//                               break;
-//                           }
-//                         },
-//                         icon: const Icon(Icons.chevron_right),
-//                       ),
-//                     ),
-//                   ),
-//                 );
-//               },
-//             ),
-//             // Home Button
-//             ElevatedButton.icon(
-//               onPressed: () {
-//                 Navigator.pop(context);
-//               },
-//               style: ElevatedButton.styleFrom(
-//                 backgroundColor: const Color.fromARGB(255, 119, 56, 137),
-//                 padding: EdgeInsets.symmetric(horizontal: 50, vertical: 15),
-//                 shape: RoundedRectangleBorder(
-//                   borderRadius: BorderRadius.circular(30.0),
-//                 ),
-//               ),
-//               icon: Icon(Icons.arrow_back, color: Colors.white),
-//               label: Text(
-//                 'Home Screen',
-//                 style: GoogleFonts.arima(color: Colors.white, fontSize: 18),
-//               ),
-//             ),
-//           ],
-//         ),
-//       ),
-//     );
-//   }
-
-//   // Widget to build individual profile information row
-//   Widget _buildInfoRow(String title, String value) {
-//     return Row(
-//       mainAxisAlignment: MainAxisAlignment.spaceBetween,
-//       children: [
-//         Text(
-//           title,
-//           style: GoogleFonts.arima(fontSize: 18, color: Colors.grey[700]),
-//         ),
-//         Text(
-//           value,
-//           style: GoogleFonts.arima(
-//             fontSize: 18,
-//             fontWeight: FontWeight.bold,
-//             color: Color(0xFF4A148C),
-//           ),
-//         ),
-//       ],
-//     );
-//   }
-// }
-
-// // Your custom screens and data models (like customListTiles) should go here
-

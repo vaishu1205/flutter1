@@ -1,14 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+
 import 'package:ishipprj/SignUp.dart';
 import 'package:ishipprj/UserLogin.dart';
+import 'package:ishipprj/new_home.dart';
+import 'package:ishipprj/startingpage.dart';
 
 class LoginScreen extends StatelessWidget {
   const LoginScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return Loginscreen();
+    return const Loginscreen();
   }
 }
 
@@ -20,124 +23,137 @@ class Loginscreen extends StatefulWidget {
 }
 
 class _LoginscreenState extends State<Loginscreen> {
+  Widget _buildGradientButton({
+    required String text,
+    required VoidCallback onPressed,
+    double horizontalPadding = 50,
+    double verticalPadding = 20,
+  }) {
+    return Container(
+      decoration: BoxDecoration(
+        gradient: const LinearGradient(
+          colors: [Color(0xFF9C27B0), Color(0xFF673AB7)],
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+        ),
+        borderRadius: BorderRadius.circular(40.0),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.purple.withOpacity(0.3),
+            spreadRadius: 1,
+            blurRadius: 8,
+            offset: const Offset(0, 4),
+          ),
+        ],
+      ),
+      child: Material(
+        color: Colors.transparent,
+        child: InkWell(
+          onTap: onPressed,
+          borderRadius: BorderRadius.circular(30.0),
+          child: Padding(
+            padding: EdgeInsets.symmetric(
+              horizontal: horizontalPadding,
+              vertical: verticalPadding,
+            ),
+            child: Text(
+              text,
+              style: GoogleFonts.arima(
+                color: Colors.white,
+                fontSize: 16,
+                fontWeight: FontWeight.w600,
+                letterSpacing: 0.5,
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        backgroundColor: Color(0xFF1A0129),
-        body: Padding(
-          padding: const EdgeInsets.only(top: 80),
+      backgroundColor: const Color(0xFF1A0129),
+      body: SingleChildScrollView(
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 20),
           child: Column(
             children: [
+              const SizedBox(height: 80),
               Container(
-                width: 400,
+                width: double.infinity,
                 height: 300,
                 decoration: BoxDecoration(
-                  color: Color(0xFF1A0129),
-                  borderRadius: BorderRadius.only(
-                    topLeft: Radius.circular(30),
-                    topRight: Radius.circular(30),
-                    bottomLeft: Radius.circular(30),
-                    bottomRight: Radius.circular(30),
+                  color: const Color(0xFF1A0129),
+                  borderRadius: BorderRadius.circular(30),
+                ),
+                child: Image.asset(
+                  "assets/self_care.png",
+                  fit: BoxFit.contain,
+                ),
+              ),
+              const SizedBox(height: 20),
+              ShaderMask(
+                shaderCallback: (bounds) => const LinearGradient(
+                  colors: [Colors.yellow, Colors.amber],
+                ).createShader(bounds),
+                child: Text(
+                  "Self-care is how you",
+                  style: GoogleFonts.arima(
+                    fontSize: 32,
+                    color: Colors.white,
+                    fontWeight: FontWeight.bold,
                   ),
                 ),
-                child: Image.network(
-                    "https://res.cloudinary.com/dsgjptfqj/image/upload/v1729576952/undraw_Happy_announcement_re_tsm0_z0hevr-removebg-preview_siignm.png"),
               ),
-              SizedBox(
-                height: 10,
+              ShaderMask(
+                shaderCallback: (bounds) => const LinearGradient(
+                  colors: [Colors.yellow, Colors.amber],
+                ).createShader(bounds),
+                child: Text(
+                  "take your power back",
+                  style: GoogleFonts.arima(
+                    fontSize: 32,
+                    color: Colors.white,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
               ),
-              Text(
-                "Self-care is how you",
-                style: GoogleFonts.arima(
-                    fontSize: 28,
-                    color: Colors.yellow,
-                    fontWeight: FontWeight.bold),
-              ),
-              Text(
-                "take your power back",
-                style: GoogleFonts.arima(
-                    fontSize: 28,
-                    color: Colors.yellow,
-                    fontWeight: FontWeight.bold),
-              ),
-              SizedBox(height: 40),
+              const SizedBox(height: 50),
               Row(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: [
-                  Padding(
-                    padding: const EdgeInsets.only(left: 20),
-                    child: ElevatedButton(
-                      onPressed: () {
-                        Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) => Userlgin()));
-                      },
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: const Color.fromARGB(255, 248, 86, 46),
-                        padding:
-                            EdgeInsets.symmetric(horizontal: 60, vertical: 20),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(30.0),
-                        ),
-                      ),
-                      child: Text(
-                        'Log In',
-                        style: GoogleFonts.arima(color: Colors.white),
-                      ),
+                  _buildGradientButton(
+                    text: 'Log In',
+                    onPressed: () => Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (context) => const Userlgin()),
                     ),
                   ),
-                  SizedBox(
-                    width: 10,
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.only(right: 10),
-                    child: ElevatedButton(
-                      onPressed: () {
-                        Navigator.push(context,
-                            MaterialPageRoute(builder: (context) => Signup()));
-                      },
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: const Color.fromARGB(255, 248, 86, 46),
-                        padding:
-                            EdgeInsets.symmetric(horizontal: 60, vertical: 20),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(30.0),
-                        ),
-                      ),
-                      child: Text(
-                        'Sign up',
-                        style: GoogleFonts.arima(
-                            color: Colors.white, fontSize: 14),
-                      ),
+                  _buildGradientButton(
+                    text: 'Sign up',
+                    onPressed: () => Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (context) => const Signup()),
                     ),
                   ),
                 ],
               ),
-              SizedBox(
-                height: 30,
-              ),
-              Padding(
-                padding: const EdgeInsets.only(right: 10, left: 10),
-                child: ElevatedButton(
-                  onPressed: () {
-                    // Navigator.push(context,
-                    //     MaterialPageRoute(builder: (context) => FirstScreen()));
-                  },
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: const Color.fromARGB(255, 248, 86, 46),
-                    padding: EdgeInsets.symmetric(horizontal: 90, vertical: 20),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(30.0),
-                    ),
-                  ),
-                  child: Text(
-                    'Login through Number',
-                    style: GoogleFonts.arima(color: Colors.white, fontSize: 14),
-                  ),
+              const SizedBox(height: 30),
+              _buildGradientButton(
+                text: 'Login with Number',
+                onPressed: () => Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => const NewHome()),
                 ),
+                horizontalPadding: 90,
               ),
+              const SizedBox(height: 40),
             ],
           ),
-        ));
+        ),
+      ),
+    );
   }
 }
